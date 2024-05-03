@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+         <item name="colorPrimary">#3399FF</item>
+    </style>
+
+    <style name="AppTheme.Pink" parent="AppTheme">
+        <item name="colorPrimary">#FF3399</item>
+    </style>
+</resources>

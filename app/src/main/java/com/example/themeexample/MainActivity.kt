@@ -1,23 +1,35 @@
 package com.example.themeexample
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
+import androidx.preference.PreferenceManager
 import com.example.themeexample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private var currentTheme = THEME_DEFAULT
+
+    companion object {
+        private const val KEY_THEME = "Theme"
+        private val THEME_DEFAULT = R.style.AppTheme
+        private val THEME_PINK = R.style.AppTheme_Pink
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        currentTheme = PreferenceManager
+            .getDefaultSharedPreferences(this)
+            .getInt(KEY_THEME, THEME_DEFAULT)
+        setTheme()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -28,11 +40,32 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+        binding.themeSwitch.text = when(currentTheme) {
+            THEME_PINK -> "PINK -> DEFAULT"
+            else -> "DEFAULT -> PINK"
         }
+        binding.themeSwitch.setOnClickListener { view ->
+            switchTheme()
+            recreate()
+        }
+    }
+
+    private fun setTheme() {
+        super.setTheme(currentTheme)
+    }
+
+    private fun switchTheme() {
+        currentTheme = when(currentTheme) {
+            THEME_DEFAULT -> THEME_PINK
+            THEME_PINK -> THEME_DEFAULT
+            else -> THEME_DEFAULT
+        }
+
+        PreferenceManager
+            .getDefaultSharedPreferences(this)
+            .edit()
+            .putInt(KEY_THEME, currentTheme)
+            .apply()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
